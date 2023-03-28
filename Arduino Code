@@ -1,0 +1,31 @@
+#define out_pin 3
+#define in_pin 4
+#define ctrl_pin_in 8
+int check;
+int n;
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(ctrl_pin_in, INPUT);
+  pinMode(out_pin,OUTPUT);
+  pinMode(in_pin,OUTPUT);
+  Serial.begin(1000000);
+  check=0;
+  n=200;
+}
+
+void loop() {
+  read=(digitalRead(ctrl_pin_in));
+ 
+  if(digitalRead(ctrl_pin_in)==HIGH){
+    if(micros()%n<100){
+      digitalWrite(out_pin,HIGH);
+      digitalWrite(in_pin,LOW);
+    }
+    else if(micros()%n>=100){
+      digitalWrite(out_pin,LOW);
+      digitalWrite(in_pin,HIGH);
+    }
+   
+  }
+}
