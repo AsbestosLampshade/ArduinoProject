@@ -1,0 +1,258 @@
+#include <stdlib.h>
+#define out_pin 3
+#define in_pin 4
+#define ctrl_pin_in 8
+
+struct node{
+	char ch;
+	struct node *left, *right;
+
+};
+typedef struct node node_t;
+
+int check;
+int n;
+int state;
+node_t *root;
+char ch;
+int count;
+char buffer[20];
+int buffer_index;
+
+void initialize(node_t *root)
+{
+	root = malloc(sizeof(node_t));
+	root->ch = '/';
+
+	//E
+	root->left = malloc(sizeof(node_t));
+	root->left->ch = 'E';
+
+	//I
+	root->left->left = malloc(sizeof(node_t));
+	root->left->left->ch = 'I';
+	
+	//S
+	root->left->left->left = malloc(sizeof(node_t));
+	root->left->left->left->ch = 'S';
+
+
+	//H
+	root->left->left->left->left = malloc(sizeof(node_t));
+	root->left->left->left->left->left = NULL; 
+	root->left->left->left->left->right = NULL;
+	root->left->left->left->right->ch = 'H';
+	
+	//V
+	root->left->left->left->right = malloc(sizeof(node_t));
+	root->left->left->left->right->left = NULL;
+	root->left->left->left->right->right = NULL;
+	root->left->left->left->right->ch = 'V';
+	
+
+	//U
+	root->left->left->right = malloc(sizeof(node_t));
+	root->left->left->right->ch = 'U';
+	root->left->left->right->right = NULL;
+
+
+
+	//F
+	root->left->left->right->left = malloc(sizeof(node_t));
+	root->left->left->right->left->ch = 'F';
+	root->left->left->right->left->right = NULL;
+	root->left->left->right->left->left = NULL;
+
+	//A
+	root->left->right = malloc(sizeof(node_t));
+	root->left->right->ch = 'A';
+
+
+
+	//R
+	root->left->right->left = malloc(sizeof(node_t));
+	root->left->right->left->ch = 'R';
+	root->left->right->left->right = NULL;
+
+
+	//L
+	root->left->right->left->left = malloc(sizeof(node_t));
+	root->left->right->left->left->ch = 'L';
+	root->left->right->left->left->left = NULL;
+	root->left->right->left->left->right = NULL;
+
+	//W
+	root->left->right->right = malloc(sizeof(node_t));
+	root->left->right->right->ch = 'W';
+
+
+	//P
+	root->left->right->right->left = malloc(sizeof(node_t));
+	root->left->right->right->left->ch = 'P';
+	root->left->right->right->left->left = NULL;
+	root->left->right->right->left->right = NULL;
+	
+	//J
+	root->left->right->right->right = malloc(sizeof(node_t));
+	root->left->right->right->right->ch = 'J';
+	root->left->right->right->right->left = NULL;
+	root->left->right->right->right->right = NULL;
+
+
+
+	//T
+	root->right = malloc(sizeof(node_t));
+	root->right->ch = 'T';
+
+
+	//N
+	root->right->left = malloc(sizeof(node_t));
+	root->right->left->ch = 'N';
+
+
+	//D
+	root->right->left->left = malloc(sizeof(node_t));
+	root->right->left->left->ch = 'D';
+
+	//B
+	root->right->left->left->left = malloc(sizeof(node_t));
+	root->right->left->left->left->ch = 'B';
+	root->right->left->left->left->left = NULL;
+	root->right->left->left->left->right = NULL;
+
+	//X
+	root->right->left->left->right = malloc(sizeof(node_t));
+	root->right->left->left->right->ch = 'X';
+	root->right->left->left->right->left = NULL;
+	root->right->left->left->right->right = NULL;
+
+	//K
+	root->right->left->right = malloc(sizeof(node_t));
+	root->right->left->right->ch = 'K';
+
+	//C
+	root->right->left->right->left = malloc(sizeof(node_t));
+	root->right->left->right->left->ch = 'C';
+	root->right->left->right->left->left = NULL;
+	root->right->left->right->left->right = NULL;
+
+	//Y
+	root->right->left->right->right = malloc(sizeof(node_t));
+	root->right->left->right->right->ch = 'Y';
+	root->right->left->right->right->left = NULL;
+	root->right->left->right->right->right = NULL;
+
+	//M
+	root->right->right = malloc(sizeof(node_t));
+	root->right->right->ch = 'M';
+
+	//G
+	root->right->right->left = malloc(sizeof(node_t));
+	root->right->right->left->ch = 'G';
+
+	//Z
+	root->right->right->left->left = malloc(sizeof(node_t));
+	root->right->right->left->left->ch = 'Z';
+	root->right->right->left->left->left = NULL;
+	root->right->right->left->left->right = NULL;
+
+
+	//Q
+	root->right->right->left->right = malloc(sizeof(node_t));
+	root->right->right->left->right->ch = 'Q';
+	root->right->right->left->right->left = NULL;
+	root->right->right->left->right->right = NULL;
+
+	//O
+	root->right->right->right = malloc(sizeof(node_t));
+	root->right->right->right->ch = 'O';
+	root->right->right->right->left = NULL;
+	root->right->right->right->right = NULL;
+
+
+}
+
+void process_char()
+{
+	int i = 0;
+	node_t *parent = root;
+	node_t *tree = root;
+	while (buffer[i] != '\0') 
+	{
+		if (tree != NULL) {
+			parent = tree;
+			if (tree->ch == '.')
+				tree = tree->left;
+			else 
+				tree =  tree->right;
+		} else {
+			output(parent->ch);
+			parent = tree = root;
+			buffer_index = 0;
+		}
+		++i;
+	}
+
+}
+
+
+void setup() {
+	// put your setup code here,  to run once:
+	pinMode(ctrl_pin_in, INPUT);
+	pinMode(out_pin, OUTPUT);
+	pinMode(in_pin, OUTPUT);
+	Serial.begin(1000000);
+	check = 0;
+	n = 200;
+	state = 0;
+	buffer_index = 0;
+	initialize(root);
+}
+
+void loop() {
+	ch = digitalRead(ctrl_pin_in);
+
+	switch (state) {
+		case 0:
+				if (ch == 1)
+					state = count = 1;
+				break;
+		case 1:
+				if (ch == 1)
+					++count;
+				else {
+					state = 2;
+					if (count < 50)
+						buffer[buffer_index++] = '.';
+					else
+						buffer[buffer_index++] = '-';
+					count = 0;
+				}
+				break;
+		case 2:
+				if (ch == 0) {
+					if (count < timeout) 
+						++count;
+					else {
+						process_char();
+						state = count = 0;
+					}
+				} else 
+					state = count = 1;
+				break;
+
+	}
+
+
+	if (digitalRead(ctrl_pin_in) == HIGH){
+		if (micros()%n < 100){
+			digitalWrite(out_pin, HIGH);
+			digitalWrite(in_pin, LOW);
+		}
+		else if (micros()%n >= 100){
+			digitalWrite(out_pin, LOW);
+			digitalWrite(in_pin, HIGH);
+		}
+
+	}
+}
